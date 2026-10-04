@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "target": "ES2022", "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext", "moduleResolution": "Bundler", "jsx": "react-jsx",
+    "strict": true, "noEmit": true, "esModuleInterop": true, "skipLibCheck": true,
+    "resolveJsonModule": true, "isolatedModules": true, "plugins": [{"name":"next"}],
+    "baseUrl": ".", "paths": {"@axile/engines": ["packages/engines/src/index.ts"], "@axile/core": ["packages/core/src/index.ts"], "@axile/providers": ["packages/providers/src/index.ts"], "@axile/db": ["packages/db/src/index.ts"]}
+  },
+  "include": ["**/*.ts", "**/*.tsx", "apps/web/.next/types/**/*.ts"],
+  "exclude": ["node_modules", "apps/web/.next", "packages/db/generated"]
+}

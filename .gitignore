@@ -27,3 +27,14 @@ __pycache__/
 
 # Logs
 *.log
+
+# Runtime artifacts
+.next/
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
+packages/db/generated/
+playwright-report/
+test-results/
+*.tsbuildinfo

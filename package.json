@@ -1,0 +1,24 @@
+{
+  "name": "axile", "version": "0.1.0", "private": true, "type": "module",
+  "workspaces": ["apps/*", "packages/*"],
+  "scripts": {
+    "dev": "next dev apps/web", "build": "prisma generate && next build apps/web",
+    "start": "next start apps/web", "test": "vitest run", "typecheck": "tsc --noEmit",
+    "lint": "eslint .", "check": "npm test && npm run typecheck && npm run lint",
+    "simulate": "tsx scripts/simulate.ts", "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev", "db:deploy": "prisma migrate deploy",
+    "db:seed": "tsx scripts/seed.ts", "spectate": "tsx scripts/spectate.ts",
+    "test:e2e": "playwright test"
+  },
+  "dependencies": {
+    "next": "16.3.8", "react": "19.3.0", "react-dom": "19.3.0",
+    "@prisma/client": "7.10.0", "@prisma/adapter-better-sqlite3": "7.10.0",
+    "dotenv": "^17.0.0", "zod": "^4.0.0", "chess.js": "^1.4.0"
+  },
+  "devDependencies": {
+    "prisma": "7.10.0", "typescript": "^5.9.0", "tsx": "^4.20.0", "vitest": "5.0.3",
+    "@types/node": "^24.0.0", "@types/react": "^19.0.0", "@types/react-dom": "^19.0.0",
+    "eslint": "^9.0.0", "typescript-eslint": "^8.0.0", "eslint-plugin-react-hooks": "^7.0.0",
+    "@playwright/test": "^1.58.0"
+  }
+}

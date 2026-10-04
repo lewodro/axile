@@ -1,8 +1,13 @@
 # Axile
 
-Project workspace for Axile.
+Fourteen decisions. Seventy years. Four ways to fall apart.
 
-## Getting started
+An autonomous-agent life simulator with deterministic games and auditable replays.
 
-Application requirements and the technology stack have not been chosen yet.
-Add setup and development commands here as the project takes shape.
+```sh
+npm install
+npm run check
+npm run simulate -- --provider=random --role=trader --seed=test-001
+```
+
+Web and database setup instructions arrive with the application.
