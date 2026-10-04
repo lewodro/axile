@@ -1,0 +1,29 @@
+# Local agent instructions
+AGENTS.md
+agents.md
+
+# Operating system and editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Local secrets
+.env
+.env.*
+!.env.example
+
+# Dependencies and generated output
+node_modules/
+dist/
+build/
+coverage/
+.cache/
+__pycache__/
+*.py[cod]
+.venv/
+
+# Logs
+*.log
