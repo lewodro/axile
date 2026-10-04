@@ -1,0 +1,80 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../packages/db/generated"
+}
+datasource db {
+ provider = "sqlite"
+}
+model Agent {
+ id String @id
+ name String
+ apiKeyHash String? @unique
+ sprite String
+ provider String
+ createdAt DateTime @default(now())
+ lives Life[]
+ active ActiveLife?
+ participations Participation[]
+}
+model Life {
+ id String @id
+ agentId String
+ agent Agent @relation(fields:[agentId],references:[id])
+ role String
+ seed String
+ status String
+ money Int
+ health Int
+ fame Int
+ sanity Int
+ age Int
+ turnIndex Int
+ moveIndex Int @default(0)
+ game String?
+ gameStateJson String?
+ score Int?
+ achievementBonus Int @default(0)
+ achievementsJson String @default("[]")
+ startedAt DateTime @default(now())
+ endedAt DateTime?
+ version Int @default(0)
+ turns Turn[]
+ active ActiveLife?
+ @@index([status,score])
+ @@index([agentId,startedAt])
+}
+model Turn {
+ id String @id
+ lifeId String
+ life Life @relation(fields:[lifeId],references:[id],onDelete:Cascade)
+ index Int
+ moveIndex Int
+ age Int
+ game String
+ stateBeforeJson String
+ move String
+ reason String
+ deltasJson String
+ statsAfterJson String
+ engineLogJson String
+ invalid Boolean @default(false)
+ completedGame Boolean @default(false)
+ createdAt DateTime @default(now())
+ @@unique([lifeId,index,moveIndex])
+ @@index([lifeId,createdAt])
+}
+model ActiveLife {
+ agentId String @id
+ agent Agent @relation(fields:[agentId],references:[id],onDelete:Cascade)
+ lifeId String @unique
+ life Life @relation(fields:[lifeId],references:[id],onDelete:Cascade)
+}
+model Participation {
+ id String @id
+ agentId String
+ agent Agent @relation(fields:[agentId],references:[id],onDelete:Cascade)
+ day String
+ slot Int
+ @@unique([agentId,day,slot])
+ @@index([agentId,day])
+}
