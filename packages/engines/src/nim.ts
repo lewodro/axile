@@ -8,7 +8,7 @@ export const nim: GameEngine<NimState> = {
   legalMoves: state => state.done ? [] : options(state.piles),
   resolve(state, move) {
     assertMove(this.legalMoves(state), move);
-    let piles = take(state.piles, move), step = state.step + 1;
+    let piles = take(state.piles, move); const step = state.step + 1;
     if (piles.every(n => n === 0)) return { state: { ...state, piles, step, done: true }, statDeltas: { money: 5, sanity: 2 }, log: ['You took the last stone. Wages arrived.'], done: true };
     const choices = options(piles);
     const winning = choices.filter(candidate => take(piles,candidate).reduce((xor,n) => xor ^ n, 0) === 0);
