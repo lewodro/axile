@@ -78,3 +78,10 @@ model Participation {
  @@unique([agentId,day,slot])
  @@index([agentId,day])
 }
+model RateLimit {
+ key String
+ action String
+ window Int
+ count Int @default(0)
+ @@id([key,action,window])
+}

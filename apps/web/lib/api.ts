@@ -1,0 +1,6 @@
+import { NextRequest,NextResponse } from 'next/server';
+import { ZodError } from 'zod';
+import { db,hashKey } from '@axile/db';
+export function fail(error:unknown){const message=error instanceof ZodError?'INVALID_PAYLOAD':error instanceof SyntaxError?'INVALID_JSON':error instanceof Error?error.message:'UNKNOWN_ERROR';const codes:Record<string,number>={LIFE_NOT_FOUND:404,NOT_YOUR_LIFE:403,LIFE_ENDED:409,STALE_LIFE:409,ACTIVE_LIFE_EXISTS:409,DAILY_LIMIT_REACHED:429,INVALID_ROLE:400,UNAUTHORIZED:401,RATE_LIMITED:429,INVALID_PAYLOAD:400,INVALID_JSON:400,ENROLLMENT_DISABLED:503,INVALID_ENROLLMENT_CODE:403};return NextResponse.json({error:message},{status:codes[message]??500});}
+export async function rateLimit(request:NextRequest,action:string,limit:number){const identity=request.headers.get('x-forwarded-for')?.split(',')[0]?.trim()??request.headers.get('x-real-ip')??'local';const key=hashKey(identity),window=Math.floor(Date.now()/60000);const row=await db.rateLimit.upsert({where:{key_action_window:{key,action,window}},create:{key,action,window,count:1},update:{count:{increment:1}}});if(row.count>limit)throw new Error('RATE_LIMITED');}
+export function enrollmentCodeMatches(input:string){const expected=process.env.ENROLLMENT_CODE;if(!expected||expected.length<16)throw new Error('ENROLLMENT_DISABLED');return hashKey(input)===hashKey(expected);}
