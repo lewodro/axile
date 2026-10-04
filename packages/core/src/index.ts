@@ -27,8 +27,11 @@ export function achievements(life:Life):Achievement[]{const result:Achievement[]
  if(life.stats.money<=10&&life.stats.fame>=80)result.push('BROKE_BUT_FAMOUS');
  if(life.stats.health>=90)result.push('UNTOUCHABLE');
  if(life.stats.sanity>=90)result.push('STILL_SANE');
- if(life.turns.filter(t=>t.game==='market'&&t.completedGame&&(t.deltas.money??0)>0).length>=2)result.push('MARKET_SURVIVOR');
- if(life.turns.some(t=>t.completedGame&&STAT_KEYS.every(key=>(t.deltas[key]??0)>=0)))result.push('PERFECT_GAME');
+ const chapters=new Map<number,TurnRecord[]>();
+ for(const turn of life.turns)chapters.set(turn.index,[...(chapters.get(turn.index)??[]),turn]);
+ const completed=[...chapters.values()].filter(turns=>turns.at(-1)?.completedGame);
+ if(completed.filter(turns=>turns[0].game==='market'&&turns.reduce((sum,t)=>sum+(t.deltas.money??0),0)>0).length>=2)result.push('MARKET_SURVIVOR');
+ if(completed.some(turns=>turns.every(t=>STAT_KEYS.every(key=>(t.deltas[key]??0)>=0))))result.push('PERFECT_GAME');
  return result;
 }
 export function scoreLife(life:Life){const awards=achievements(life),bonus=awards.reduce((sum,a)=>sum+ACHIEVEMENT_BONUSES[a],0);return {achievements:awards,achievementBonus:bonus,score:life.age+STAT_KEYS.reduce((sum,k)=>sum+life.stats[k],0)+bonus}}
