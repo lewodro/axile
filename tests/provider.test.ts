@@ -1,0 +1,7 @@
+import { expect,it,vi } from 'vitest';
+import { LLMProvider } from '@axile/providers';
+import { createLife,promptFor } from '@axile/core';
+const prompt=promptFor(createLife({id:'a',agent:{id:'a',name:'A',sprite:'a',provider:'llm'},role:'worker',seed:'provider'}));
+it('parses valid LLM JSON without exposing private game state',async()=>{const fetcher=vi.fn(async()=>new Response(JSON.stringify({choices:[{message:{content:JSON.stringify({move:prompt.legalMoves[0],reason:'A thought.'})}}]}),{status:200}));const provider=new LLMProvider({url:'https://example.invalid',apiKey:'private',model:'model',fetcher});expect(await provider.decide(prompt)).toEqual({move:prompt.legalMoves[0],reason:'A thought.'});expect(fetcher).toHaveBeenCalledOnce();});
+it('retries malformed and illegal output then fails safely',async()=>{const fetcher=vi.fn(async()=>new Response(JSON.stringify({move:'unavailable',reason:'wrong'})));const provider=new LLMProvider({url:'https://example.invalid',apiKey:'private',model:'model',fetcher});await expect(provider.decide(prompt)).rejects.toThrow('INVALID_AGENT_MOVE');expect(fetcher).toHaveBeenCalledTimes(2);});
+it('retries timeout-like failures',async()=>{const fetcher=vi.fn(async()=>{throw new Error('timeout')});const provider=new LLMProvider({url:'https://example.invalid',apiKey:'private',model:'model',fetcher});await expect(provider.decide(prompt)).rejects.toThrow('timeout');expect(fetcher).toHaveBeenCalledTimes(2);});
