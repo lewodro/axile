@@ -2,13 +2,14 @@
   "name": "axile", "version": "0.1.0", "private": true, "type": "module",
   "workspaces": ["apps/*", "packages/*"],
   "scripts": {
-    "dev": "next dev apps/web", "build": "prisma generate && next build apps/web",
-    "start": "next start apps/web", "test": "vitest run", "typecheck": "tsc --noEmit",
+    "dev": "tsx scripts/arena.ts dev", "build": "prisma generate && next build apps/web",
+    "start": "tsx scripts/arena.ts start", "test": "vitest run", "typecheck": "tsc --noEmit",
     "lint": "eslint .", "check": "npm test && npm run typecheck && npm run lint",
     "simulate": "tsx scripts/simulate.ts", "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev", "db:deploy": "prisma migrate deploy",
     "db:seed": "tsx scripts/seed.ts", "spectate": "tsx scripts/spectate.ts",
-    "test:e2e": "playwright test", "economy:demo": "tsx scripts/economy-demo.ts"
+    "test:e2e": "playwright test", "economy:demo": "tsx scripts/economy-demo.ts",
+    "verify-life": "tsx scripts/verify-life.ts"
   },
   "dependencies": {
     "next": "16.3.8", "react": "19.3.0", "react-dom": "19.3.0",

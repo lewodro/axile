@@ -1,0 +1,7 @@
+ALTER TABLE "Agent" ADD COLUMN "personality" TEXT;
+
+ALTER TABLE "Life" ADD COLUMN "autoRun" BOOLEAN NOT NULL DEFAULT false;
+ALTER TABLE "Life" ADD COLUMN "runState" TEXT NOT NULL DEFAULT 'paused';
+ALTER TABLE "Life" ADD COLUMN "deathCause" TEXT;
+
+ALTER TABLE "Turn" ADD COLUMN "providerError" TEXT;

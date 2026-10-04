@@ -11,6 +11,7 @@ model Agent {
  apiKeyHash String? @unique
  sprite String
  provider String
+ personality String?
  createdAt DateTime @default(now())
  lives Life[]
  active ActiveLife?
@@ -38,6 +39,9 @@ model Life {
  startedAt DateTime @default(now())
  endedAt DateTime?
  version Int @default(0)
+ autoRun Boolean @default(false)
+ runState String @default("paused")
+ deathCause String?
  turns Turn[]
  active ActiveLife?
  @@index([status,score])
@@ -59,6 +63,7 @@ model Turn {
  engineLogJson String
  invalid Boolean @default(false)
  completedGame Boolean @default(false)
+ providerError String?
  createdAt DateTime @default(now())
  @@unique([lifeId,index,moveIndex])
  @@index([lifeId,createdAt])
