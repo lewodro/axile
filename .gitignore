@@ -38,3 +38,4 @@ packages/db/generated/
 playwright-report/
 test-results/
 *.tsbuildinfo
+apps/web/next-env.d.ts
