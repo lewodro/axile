@@ -36,6 +36,15 @@
       ],
       "@/*": [
         "apps/web/*"
+      ],
+      "@axile/economy": [
+        "packages/economy/src/index.ts"
+      ],
+      "@axile/economy/mock-wallet": [
+        "packages/economy/src/mock-wallet.ts"
+      ],
+      "@axile/economy/mock-ledger": [
+        "packages/economy/src/mock-ledger.ts"
       ]
     }
   },

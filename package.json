@@ -8,7 +8,7 @@
     "simulate": "tsx scripts/simulate.ts", "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev", "db:deploy": "prisma migrate deploy",
     "db:seed": "tsx scripts/seed.ts", "spectate": "tsx scripts/spectate.ts",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test", "economy:demo": "tsx scripts/economy-demo.ts"
   },
   "dependencies": {
     "next": "16.3.8", "react": "19.3.0", "react-dom": "19.3.0",
