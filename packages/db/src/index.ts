@@ -1,11 +1,14 @@
+import { PrismaPg } from '@prisma/adapter-pg';
+import { databaseUrl } from './config';
 import { PrismaBetterSqlite3 } from '@prisma/adapter-better-sqlite3';
 import { PrismaClient } from '../generated/client';
 import { createLife,stepLife,promptFor,replayLife,type Life,type AgentDecision,type AgentIdentity,type Role,type TurnRecord,type GameState,type GameId,type Achievement } from '@axile/core';
 import { randomUUID,createHash,randomBytes,timingSafeEqual } from 'node:crypto';
-const adapter=new PrismaBetterSqlite3({url:process.env.DATABASE_URL??'file:./prisma/dev.db'});
+const url=databaseUrl();
+const adapter=/^postgres(ql)?:/.test(url)?new PrismaPg({connectionString:url,max:5,connectionTimeoutMillis:5000,idleTimeoutMillis:30000}):new PrismaBetterSqlite3({url});
 const globalDb=globalThis as typeof globalThis & {axileDb?:PrismaClient};
 export const db=globalDb.axileDb??new PrismaClient({adapter});
-if(process.env.NODE_ENV!=='production')globalDb.axileDb=db;
+globalDb.axileDb=db;
 export function logEvent(event:string,data:Record<string,string|number|boolean|null>){console.info(JSON.stringify({event,...data}));}
 export function hashKey(key:string){return createHash('sha256').update(key).digest('hex');}
 export function keyMatches(key:string,hash:string){const a=Buffer.from(hashKey(key),'hex'),b=Buffer.from(hash,'hex');return a.length===b.length&&timingSafeEqual(a,b)}

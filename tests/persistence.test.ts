@@ -3,7 +3,7 @@ import { execFileSync } from 'node:child_process';
 import { randomUUID } from 'node:crypto';
 import { RandomProvider } from '@axile/providers';
 it('persists every move, blocks active and daily duplicates, and verifies replay',async()=>{
- process.env.DATABASE_URL='file:./prisma/test.db';
+ process.env.DATABASE_URL=process.env.TEST_DATABASE_URL??process.env.DATABASE_URL??'file:./prisma/test.db';
  execFileSync('node',['node_modules/prisma/build/index.js','migrate','deploy'],{env:{...process.env,DATABASE_URL:process.env.DATABASE_URL},stdio:'pipe'});
  const {registerAgent,startLife,getLife,submitMove,verifyReplay,db}=await import('@axile/db');
  const {promptFor}=await import('@axile/core');

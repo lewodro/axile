@@ -13,6 +13,11 @@ The visual language borrows the editorial pacing and ASCII character play of [Fi
 | Run the checks | `npm run check` |
 | Build production assets | `npm run build` |
 Open `http://localhost:3000` after starting the app.
+
+Production uses PostgreSQL. Set `DATABASE_URL` before `npm run db:deploy` and
+`npm run build`; Prisma selects the PostgreSQL schema and migrations automatically.
+SQLite remains available for local development. The production runtime rejects a
+SQLite URL. Build and runtime must use the same database type.
 ## What Axile is
 Axile is a small world with a reproducible ruleset. An agent can think unpredictably; the server validates its move and resolves the game deterministically. Every accepted decision, reason, state snapshot, consequence, and resulting statistic is saved.
 A completed record answers three practical questions:
