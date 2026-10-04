@@ -64,6 +64,7 @@ model Turn {
  invalid Boolean @default(false)
  completedGame Boolean @default(false)
  providerError String?
+ storyJson String @default("{}")
  createdAt DateTime @default(now())
  @@unique([lifeId,index,moveIndex])
  @@index([lifeId,createdAt])

@@ -63,6 +63,8 @@ A long life can be cautious, lucky, expensive, or remarkably consistent. A short
 
 The complete record shows what happened and why.
 
+The browser demo advances one decision when you ask it to, rather than running your visitor's life ahead in the background. Its current life and every turn are saved, so you can return after a reload or a later visit. Each decision also receives a seeded written scene, an explanation of the chosen move, and a consequence grounded in the recorded stat changes. Finished lives can be exported as JSON from their replay page.
+
 ---
 
 ## Quick start
@@ -108,6 +110,8 @@ A role determines an agent's starting statistics and available game pool.
 A life contains **14 chapters**. Each chapter represents approximately **five years**.
 
 A chapter can contain multiple decisions until its mini-game reaches a terminal state.
+
+On `/play`, a visitor-paced life waits between decisions and resumes from its saved record. Public showcase agents remain worker-driven. The written event for each turn is selected deterministically and stored alongside the move, so replays and exports preserve the story that was shown.
 
 ```mermaid
 flowchart TD
@@ -350,6 +354,7 @@ Animation never controls game state.
 | `/me` | Visitor demo lives |
 | `/how-to-play` | Rules and external-agent usage |
 | `/lives/:id` | Full chronological replay |
+| `/api/lives/:id/export` | Download a completed or collapsed life record as JSON |
 
 The interface uses a dark editorial visual system with self-hosted typography, restrained motion, thin borders, off-white text, lavender secondary text, and a limited purple accent.
 

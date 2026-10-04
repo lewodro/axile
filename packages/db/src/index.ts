@@ -8,6 +8,7 @@ import {
   promptFor,
   replayLife,
   stepLife,
+  writeTurnStory,
   ROLES,
   type Achievement,
   type AgentDecision,
@@ -86,6 +87,19 @@ function toData(life: Life) {
   };
 }
 
+function storedStory(value: string, fallback: TurnRecord['story']): TurnRecord['story'] {
+  try {
+    const parsed: unknown = JSON.parse(value);
+    if (typeof parsed === 'object' && parsed !== null
+      && 'eventId' in parsed && typeof parsed.eventId === 'string'
+      && 'title' in parsed && typeof parsed.title === 'string'
+      && 'scene' in parsed && typeof parsed.scene === 'string'
+      && 'choice' in parsed && typeof parsed.choice === 'string'
+      && 'consequence' in parsed && typeof parsed.consequence === 'string') return parsed as TurnRecord['story'];
+  } catch { /* Old or malformed story fields are reconstructed from the turn's canonical state. */ }
+  return fallback;
+}
+
 export async function startLife(agent: AgentIdentity, role: Role, seed?: string, options: { autoRun?: boolean } = {}) {
   if (!(role in ROLES)) throw new Error('INVALID_ROLE');
   const now = new Date(), day = now.toISOString().slice(0, 10);
@@ -111,6 +125,7 @@ export async function getLife(id: string): Promise<Life | null> {
   const agent: AgentIdentity = { id: row.agent.id, name: row.agent.name, sprite: row.agent.sprite, provider: row.agent.provider, personality: row.agent.personality };
   const turns: TurnRecord[] = row.turns.map(turn => ({
     index: turn.index,
+    moveIndex: turn.moveIndex,
     age: turn.age,
     game: turn.game as GameId,
     stateBefore: JSON.parse(turn.stateBeforeJson),
@@ -119,6 +134,7 @@ export async function getLife(id: string): Promise<Life | null> {
     deltas: JSON.parse(turn.deltasJson),
     statsAfter: JSON.parse(turn.statsAfterJson),
     engineLog: JSON.parse(turn.engineLogJson),
+    story: storedStory(turn.storyJson, writeTurnStory({ seed: row.seed, role: row.role as Role, game: turn.game as GameId, turnIndex: turn.index, moveIndex: turn.moveIndex, move: turn.move, deltas: JSON.parse(turn.deltasJson) })),
     invalid: turn.invalid,
     completedGame: turn.completedGame,
     providerError: turn.providerError,
@@ -158,7 +174,7 @@ async function persistTurn(previous: Life, next: Life, agentId: string) {
       id: randomUUID(), lifeId: previous.id, index: turn.index, moveIndex: previous.moveIndex, age: turn.age, game: turn.game,
       stateBeforeJson: JSON.stringify(turn.stateBefore), move: turn.move, reason: turn.reason, deltasJson: JSON.stringify(turn.deltas),
       statsAfterJson: JSON.stringify(turn.statsAfter), engineLogJson: JSON.stringify(turn.engineLog), invalid: turn.invalid,
-      completedGame: turn.completedGame, providerError: turn.providerError,
+      completedGame: turn.completedGame, providerError: turn.providerError, storyJson: JSON.stringify(turn.story),
     } });
     if (next.status !== 'active') await tx.activeLife.deleteMany({ where: { agentId, lifeId: previous.id } });
   });
@@ -191,6 +207,25 @@ export async function runAgentTurn(id: string, provider: AgentProvider) {
   if (claimed.count !== 1) throw new Error('STALE_LIFE');
   const next = await advanceLife(previous, provider);
   return persistTurn(previous, next, previous.agent.id);
+}
+
+export async function runInteractiveTurn(id: string, provider: AgentProvider) {
+  const previous = await getLife(id);
+  if (!previous) throw new Error('LIFE_NOT_FOUND');
+  if (previous.status !== 'active') throw new Error('LIFE_ENDED');
+  if (previous.autoRun) throw new Error('LIFE_AUTOMATIC');
+  const claimed = await db.life.updateMany({
+    where: { id, version: previous.version, status: 'active', autoRun: false, runState: { in: ['paused', 'provider_error'] } },
+    data: { runState: 'thinking' },
+  });
+  if (claimed.count !== 1) throw new Error('TURN_IN_PROGRESS');
+  try {
+    const next = await advanceLife(previous, provider);
+    return persistTurn(previous, next, previous.agent.id);
+  } catch (error) {
+    await db.life.updateMany({ where: { id, version: previous.version, status: 'active', autoRun: false }, data: { runState: 'paused' } });
+    throw error;
+  }
 }
 
 export async function setLifeAutoRun(id: string, agentId: string, autoRun: boolean) {
