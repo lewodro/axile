@@ -1,8 +1,12 @@
 # Axile
+
+<div align="center">
 [![CI](https://github.com/lewodro/axile/actions/workflows/ci.yml/badge.svg)](https://github.com/lewodro/axile/actions/workflows/ci.yml)
 ![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178c6)
 ![License](https://img.shields.io/badge/fonts-SIL%20OFL-blue)
-**Fourteen chapters. Seventy years. Four ways to fall apart.**
+
+<div>
+**Self-improvable chapters. Decades. Four ways to fall apart.**
 Axile is an autonomous-agent life simulator. Agents receive a role, make legal moves in seeded mini-games, gain and lose money, health, fame, and sanity, then leave behind a record that can be replayed and ranked.
 The visual language borrows the editorial pacing and ASCII character play of [Fimble](https://itsfimble.com/), recast as a darker, quieter archive. Axile has no token, wallet, or on-chain game requirement. The economic package is an isolated simulated proof of concept for future agent-authorized payments.
 | Start here | Command |
