@@ -1,3 +1,4 @@
 export * from './types';
 export * from './rng';
 export * from './market';
+export * from './chess';
